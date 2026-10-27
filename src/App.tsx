@@ -1,78 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
+import { TechMarquee } from './components/TechMarquee.tsx';
 import { Solutions } from './components/Solutions.tsx';
+import { Portfolio } from './components/Portfolio.tsx';
 import { InteractiveShowcase } from './components/InteractiveShowcase.tsx';
 import { ScopeEstimator } from './components/ScopeEstimator.tsx';
 import { Architecture } from './components/Architecture.tsx';
-import { CaseStudies } from './components/CaseStudies.tsx';
 import { ContactSection } from './components/ContactSection.tsx';
 import { Footer } from './components/Footer.tsx';
 import { ScrollSpine } from './components/ScrollSpine.tsx';
-import { ScrollCentralConduit } from './components/ScrollCentralConduit.tsx';
 import { ScrollReveal } from './components/ScrollReveal.tsx';
-import { TravelingLogoDot } from './components/TravelingLogoDot.tsx';
 import { SolutionType } from './types/index.ts';
+import { THEME_STORAGE_KEY } from './data/site.ts';
+
+type Theme = 'light' | 'dark';
+
+const scrollToSection = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
 export default function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('cloudmesh_theme');
-      if (stored === 'dark' || stored === 'light') {
-        return stored;
-      }
-    }
-    // Default theme is LIGHT per user requirement
-    return 'light';
-  });
+  // index.html applies the stored theme before first paint; mirror it here.
+  const [theme, setTheme] = useState<Theme>(() =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+  );
 
   const [activeShowcaseTab, setActiveShowcaseTab] = useState<SolutionType>('food-saas');
-  const [prefilledScope, setPrefilledScope] = useState<string>('');
-  const [prefilledSolution, setPrefilledSolution] = useState<string>('');
+  const [prefilledScope, setPrefilledScope] = useState('');
+  const [prefilledSolution, setPrefilledSolution] = useState('');
 
-  // Synchronize HTML element dark class with state
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', theme === 'dark');
     try {
-      localStorage.setItem('cloudmesh_theme', theme);
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch {
-      // Storage unavailable
+      // Storage unavailable (private mode etc.) — theme still applies for this visit.
     }
   }, [theme]);
 
-  const handleToggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
-
   const handleSelectSolutionDemo = (type: SolutionType) => {
     setActiveShowcaseTab(type);
-    const showcaseElement = document.getElementById('interactive-showcase');
-    if (showcaseElement) {
-      showcaseElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToSection('interactive-showcase');
   };
 
   const handleOpenInquiry = (solutionName?: string) => {
-    if (solutionName) {
-      setPrefilledSolution(solutionName);
-    }
-    const contactElement = document.getElementById('contact');
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (solutionName) setPrefilledSolution(solutionName);
+    scrollToSection('contact');
   };
 
   const handleSelectEstimateForInquiry = (summary: string) => {
     setPrefilledScope(summary);
-    const contactElement = document.getElementById('contact');
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToSection('contact');
   };
 
   const handleClearPrefill = () => {
@@ -81,34 +58,28 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-sky-500/20 selection:text-sky-900 dark:selection:text-sky-200 relative overflow-x-hidden transition-colors duration-200">
-      {/* Traveling Blue Dot from Logo that moves across screens on scroll */}
-      <TravelingLogoDot />
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 overflow-x-clip">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-slate-900 focus:px-4 focus:py-2 focus:text-white"
+      >
+        Skip to content
+      </a>
 
-      {/* Scroll-linked spine, laser progress beam, and journey waypoints */}
       <ScrollSpine />
 
-      {/* Top Bar Navigation with Light/Dark Theme Switcher */}
-      <Header 
-        onOpenInquiry={handleOpenInquiry} 
+      <Header
+        onOpenInquiry={handleOpenInquiry}
         theme={theme}
-        onToggleTheme={handleToggleTheme}
+        onToggleTheme={() => setTheme(prev => (prev === 'light' ? 'dark' : 'light'))}
       />
 
-      <main className="relative">
-        {/* Central illuminated conduit line linking from start to end that moves with scroll */}
-        <ScrollCentralConduit />
-
-        {/* Hero Section with Live Telemetry */}
+      <main id="main">
         <Hero onOpenInquiry={() => handleOpenInquiry()} />
+        <TechMarquee />
+        <Solutions onSelectSolutionDemo={handleSelectSolutionDemo} onOpenInquiry={handleOpenInquiry} />
+        <Portfolio />
 
-        {/* Core Solutions & Bento Grid */}
-        <Solutions 
-          onSelectSolutionDemo={handleSelectSolutionDemo}
-          onOpenInquiry={handleOpenInquiry}
-        />
-
-        {/* Interactive Production Demos (Food SaaS KDS, CRM, Portal, Mobile) */}
         <ScrollReveal direction="up" delayMs={60}>
           <InteractiveShowcase
             activeTab={activeShowcaseTab}
@@ -117,32 +88,16 @@ export default function App() {
           />
         </ScrollReveal>
 
-        {/* Project Scope & Investment Estimator */}
-        <ScrollReveal direction="up" delayMs={60}>
-          <ScopeEstimator onSelectEstimateForInquiry={handleSelectEstimateForInquiry} />
-        </ScrollReveal>
-
-        {/* Global Edge Architecture & New Zealand Engineering Advantage */}
-        <ScrollReveal direction="up" delayMs={60}>
-          <Architecture />
-        </ScrollReveal>
-
-        {/* Client Case Studies & Quantified Outcomes */}
-        <CaseStudies />
-
-        {/* Contact & Technical Proposal Discovery */}
-        <ScrollReveal direction="up" delayMs={60}>
-          <ContactSection
-            prefilledScope={prefilledScope}
-            prefilledSolution={prefilledSolution}
-            onClearPrefill={handleClearPrefill}
-          />
-        </ScrollReveal>
+        <Architecture />
+        <ScopeEstimator onSelectEstimateForInquiry={handleSelectEstimateForInquiry} />
+        <ContactSection
+          prefilledScope={prefilledScope}
+          prefilledSolution={prefilledSolution}
+          onClearPrefill={handleClearPrefill}
+        />
       </main>
 
-      {/* Quiet, Authoritative Footer with NZBN and Jurisdiction details */}
       <Footer />
     </div>
   );
 }
-

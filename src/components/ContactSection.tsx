@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Send, CheckCircle2, Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
-import { SolutionType } from '../types/index.ts';
-import { CloudMeshLogo } from './CloudMeshLogo.tsx';
+import React, { useState, useEffect, useId } from 'react';
+import { Send, CheckCircle2, Mail, MapPin, MessageSquare } from 'lucide-react';
+import { SectionHeading } from './SectionHeading.tsx';
+import { CONTACT_EMAIL } from '../data/site.ts';
+
+const PROJECT_TYPES = [
+  { value: 'Custom Website', label: 'Custom website or online store' },
+  { value: 'Business Admin Portal', label: 'Business portal or dashboard' },
+  { value: 'Food Shop / Cart App', label: 'Mobile app (food, logistics, other)' },
+  { value: 'Complete Digital Suite', label: 'Complete suite (website + portal + app)' },
+  { value: 'Other Project', label: 'Something else' }
+];
 
 interface ContactSectionProps {
   prefilledScope?: string;
@@ -9,40 +17,58 @@ interface ContactSectionProps {
   onClearPrefill?: () => void;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = ({
-  prefilledScope,
-  prefilledSolution,
-  onClearPrefill
-}) => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    companyName: '',
-    email: '',
-    phone: '',
-    projectType: 'Website for My Business',
-    message: ''
-  });
+type FormData = {
+  fullName: string;
+  companyName: string;
+  email: string;
+  phone: string;
+  projectType: string;
+  message: string;
+};
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const EMPTY_FORM: FormData = {
+  fullName: '',
+  companyName: '',
+  email: '',
+  phone: '',
+  projectType: PROJECT_TYPES[0].value,
+  message: ''
+};
+
+const inputClass = (hasError?: boolean) =>
+  `w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950/80 border rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-colors ${
+    hasError ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'
+  }`;
+
+export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope, prefilledSolution, onClearPrefill }) => {
+  const uid = useId();
+  const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
   useEffect(() => {
-    if (prefilledSolution) {
-      setFormData(prev => ({
-        ...prev,
-        projectType: prefilledSolution
-      }));
+    if (prefilledSolution && PROJECT_TYPES.some(t => t.value === prefilledSolution)) {
+      setFormData(prev => ({ ...prev, projectType: prefilledSolution }));
     }
   }, [prefilledSolution]);
 
+  useEffect(() => {
+    if (prefilledScope) {
+      setFormData(prev => (prev.message ? prev : { ...prev, message: prefilledScope }));
+    }
+  }, [prefilledScope]);
+
+  const update = (field: keyof FormData) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => setFormData(prev => ({ ...prev, [field]: e.target.value }));
+
   const validate = () => {
-    const errs: { [key: string]: string } = {};
+    const errs: Partial<Record<keyof FormData, string>> = {};
     if (!formData.fullName.trim()) errs.fullName = 'Please enter your name';
-    if (!formData.companyName.trim()) errs.companyName = 'Please enter your business or shop name';
+    if (!formData.companyName.trim()) errs.companyName = 'Please enter your business name';
     if (!formData.email.trim()) {
       errs.email = 'Please enter your email address';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errs.email = 'Please enter a valid email address';
     }
     return errs;
@@ -51,240 +77,187 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
-    setErrors({});
-    setIsSubmitting(true);
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 700);
+    // No backend yet: hand the enquiry to the visitor's email client so it is never silently lost.
+    const subject = `Project enquiry: ${formData.projectType} — ${formData.companyName}`;
+    const body = [
+      `Name: ${formData.fullName}`,
+      `Business: ${formData.companyName}`,
+      `Email: ${formData.email}`,
+      formData.phone && `Phone: ${formData.phone}`,
+      `Project type: ${formData.projectType}`,
+      '',
+      formData.message
+    ]
+      .filter(line => line !== '')
+      .join('\n');
+
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setIsSubmitted(true);
   };
 
   const handleReset = () => {
-    setFormData({
-      fullName: '',
-      companyName: '',
-      email: '',
-      phone: '',
-      projectType: 'Website for My Business',
-      message: ''
-    });
+    setFormData(EMPTY_FORM);
+    setErrors({});
     setIsSubmitted(false);
-    if (onClearPrefill) onClearPrefill();
+    onClearPrefill?.();
   };
 
+  const fieldId = (name: string) => `${uid}-${name}`;
+
   return (
-    <section id="contact" className="py-20 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950 relative transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Left Column: Context & Contact info */}
-          <div className="lg:col-span-5 space-y-6">
-            <div>
-              <div className="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-2">
-                <span
-                  id="dot-anchor-contact"
-                  className="w-2.5 h-2.5 rounded-sm border border-sky-500/40 dark:border-sky-400/40 rotate-45 inline-block shrink-0"
-                  aria-hidden="true"
-                />
-                <span>Get in Touch</span>
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Let's talk about your business project.
-              </h2>
-              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Whether you need a new website, a custom admin portal to manage operations, or a mobile ordering app for your food shop or cart, send us a quick note. We respond promptly to discuss how we can help.
-              </p>
-            </div>
+    <section id="contact" className="relative py-24 sm:py-32 bg-slate-50 dark:bg-slate-950 overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-0 bg-grid opacity-50" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="lg:col-span-5 space-y-10">
+            <SectionHeading
+              eyebrow="Get in Touch"
+              title={
+                <>
+                  Let's build something <span className="accent-serif text-gradient">remarkable.</span>
+                </>
+              }
+              description="Need a new website, an operations portal or a mobile app? Send us a note — we reply within one business day."
+            />
 
-            <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs">
-              <div className="flex items-start gap-3">
-                <CloudMeshLogo size="sm" showText={false} />
+            <ul className="space-y-5 text-sm">
+              <li className="flex items-start gap-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sky-600 dark:text-sky-400">
+                  <Mail className="w-4 h-4" />
+                </span>
                 <div>
-                  <div className="font-semibold text-slate-900 dark:text-white">CloudMesh Digital Solutions</div>
-                  <div className="text-slate-600 dark:text-slate-400">Registered Software Company in New Zealand</div>
+                  <div className="font-semibold text-slate-900 dark:text-white">Email us</div>
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400">
+                    {CONTACT_EMAIL}
+                  </a>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0 mt-0.5" />
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sky-600 dark:text-sky-400">
+                  <MapPin className="w-4 h-4" />
+                </span>
                 <div>
-                  <div className="font-semibold text-slate-900 dark:text-white">Headquarters</div>
-                  <div className="text-slate-600 dark:text-slate-400">Quay Street, Auckland CBD, New Zealand</div>
+                  <div className="font-semibold text-slate-900 dark:text-white">Studio</div>
+                  <div className="text-slate-600 dark:text-slate-400">Auckland CBD, New Zealand · working worldwide</div>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0 mt-0.5" />
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400">
+                  <MessageSquare className="w-4 h-4" />
+                </span>
                 <div>
-                  <div className="font-semibold text-slate-900 dark:text-white">Email Us Directly</div>
-                  <div className="text-slate-600 dark:text-slate-400 font-medium">hello@cloudmesh.co.nz</div>
+                  <div className="font-semibold text-slate-900 dark:text-white">Free consultation</div>
+                  <div className="text-slate-600 dark:text-slate-400">We review your goals and explain practical options — no pressure.</div>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <MessageSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-semibold text-slate-900 dark:text-white">Free Consultation</div>
-                  <div className="text-slate-600 dark:text-slate-400">We will review your goals and explain practical options with zero pressure.</div>
-                </div>
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
 
-          {/* Right Column: Clean Form or Success */}
-          <div className="lg:col-span-7 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <div className="lg:col-span-7 rounded-[2rem] bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 shadow-2xl shadow-slate-900/5 dark:shadow-black/40">
             {isSubmitted ? (
-              <div className="py-8 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-500/50 flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 className="w-6 h-6" />
+              <div className="py-10 text-center space-y-4" role="status">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Message Received!</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-                  Thank you, <span className="font-semibold text-slate-900 dark:text-white">{formData.fullName}</span>. We have received your inquiry for <span className="font-semibold text-slate-900 dark:text-white">{formData.companyName}</span>. Our team in Auckland will review your request and get back to you shortly.
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Almost there, {formData.fullName.split(' ')[0]}!</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
+                  Your email app should have opened with your enquiry ready to go — just press send. If it didn't open, email us
+                  directly at{' '}
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-sky-600 dark:text-sky-400">
+                    {CONTACT_EMAIL}
+                  </a>
+                  .
                 </p>
-
-                <div className="pt-4">
-                  <button
-                    onClick={handleReset}
-                    className="px-4 py-2 text-xs font-semibold text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
-                  >
-                    Send Another Message
-                  </button>
-                </div>
+                <button
+                  onClick={handleReset}
+                  className="mt-2 rounded-full border border-slate-300 dark:border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-slate-900 dark:hover:border-white transition-colors"
+                >
+                  Start a new enquiry
+                </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Tell Us What You Need</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Fill out this quick form and we'll be in touch to discuss details</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Your Name <span className="text-sky-600 dark:text-sky-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.fullName}
-                      onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                      placeholder="e.g. Liam Smith"
-                      className={`w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950/80 border rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 ${
-                        errors.fullName ? 'border-red-500' : 'border-slate-300 dark:border-slate-800'
-                      }`}
-                    />
-                    {errors.fullName && (
-                      <p className="text-[11px] text-red-500 dark:text-red-400 mt-0.5">{errors.fullName}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Business or Shop Name <span className="text-sky-600 dark:text-sky-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.companyName}
-                      onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                      placeholder="e.g. Harbor Food Cart or Kiwi Trades"
-                      className={`w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950/80 border rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 ${
-                        errors.companyName ? 'border-red-500' : 'border-slate-300 dark:border-slate-800'
-                      }`}
-                    />
-                    {errors.companyName && (
-                      <p className="text-[11px] text-red-500 dark:text-red-400 mt-0.5">{errors.companyName}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Email Address <span className="text-sky-600 dark:text-sky-400">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="liam@example.com"
-                      className={`w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950/80 border rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 ${
-                        errors.email ? 'border-red-500' : 'border-slate-300 dark:border-slate-800'
-                      }`}
-                    />
-                    {errors.email && (
-                      <p className="text-[11px] text-red-500 dark:text-red-400 mt-0.5">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Phone Number (Optional)
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="e.g. 021 123 4567"
-                      className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
-                    />
-                  </div>
+              <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {(
+                    [
+                      { name: 'fullName', label: 'Your name', type: 'text', placeholder: 'Jane Smith', autoComplete: 'name', required: true },
+                      { name: 'companyName', label: 'Business name', type: 'text', placeholder: 'Your business', autoComplete: 'organization', required: true },
+                      { name: 'email', label: 'Email', type: 'email', placeholder: 'jane@company.co.nz', autoComplete: 'email', required: true },
+                      { name: 'phone', label: 'Phone (optional)', type: 'tel', placeholder: '021 123 4567', autoComplete: 'tel', required: false }
+                    ] as const
+                  ).map(f => (
+                    <div key={f.name}>
+                      <label htmlFor={fieldId(f.name)} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        {f.label}
+                        {f.required && <span className="text-sky-600 dark:text-sky-400"> *</span>}
+                      </label>
+                      <input
+                        id={fieldId(f.name)}
+                        name={f.name}
+                        type={f.type}
+                        autoComplete={f.autoComplete}
+                        required={f.required}
+                        value={formData[f.name]}
+                        onChange={update(f.name)}
+                        placeholder={f.placeholder}
+                        aria-invalid={!!errors[f.name]}
+                        aria-describedby={errors[f.name] ? fieldId(`${f.name}-error`) : undefined}
+                        className={inputClass(!!errors[f.name])}
+                      />
+                      {errors[f.name] && (
+                        <p id={fieldId(`${f.name}-error`)} className="text-xs text-red-500 dark:text-red-400 mt-1">
+                          {errors[f.name]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label htmlFor={fieldId('projectType')} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                     What are you looking to build?
                   </label>
                   <select
+                    id={fieldId('projectType')}
                     value={formData.projectType}
-                    onChange={e => setFormData({ ...formData, projectType: e.target.value })}
-                    className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    onChange={update('projectType')}
+                    className={inputClass()}
                   >
-                    <option value="Custom Website">Custom Website for My Business</option>
-                    <option value="Business Admin Portal">Business Admin Portal for Operations</option>
-                    <option value="Food Shop / Cart App">Mobile App for Food Shop or Food Cart</option>
-                    <option value="Complete Digital Suite">Complete Digital Suite (Website + Portal + App)</option>
-                    <option value="Other Project">Other Custom Software Solution</option>
+                    {PROJECT_TYPES.map(t => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    How can we help? (Optional notes)
+                  <label htmlFor={fieldId('message')} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Tell us about your project
                   </label>
                   <textarea
-                    rows={3}
+                    id={fieldId('message')}
+                    rows={4}
                     value={formData.message}
-                    onChange={e => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Tell us a little bit about what you do and what you'd like your new website, portal, or food app to handle..."
-                    className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 font-sans"
+                    onChange={update('message')}
+                    placeholder="What does your business do, and what should your new website, portal or app handle?"
+                    className={inputClass()}
                   />
                 </div>
 
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-3 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 dark:text-slate-950 dark:bg-sky-400 dark:hover:bg-sky-300 rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm shadow-sky-500/20 active:scale-95 disabled:opacity-70"
-                  >
-                    {isSubmitting ? (
-                      <span>Sending Your Message...</span>
-                    ) : (
-                      <>
-                        <Send className="w-3.5 h-3.5" />
-                        Send Inquiry to CloudMesh Team
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                <div className="text-center text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                  We respect your privacy and will never share your contact details.
-                </div>
+                <button
+                  type="submit"
+                  className="group w-full inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 dark:bg-white py-4 text-sm font-semibold text-white dark:text-slate-950 shadow-lg transition-transform active:scale-[0.98]"
+                >
+                  <Send className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  Send enquiry
+                </button>
+                <p className="text-center text-xs text-slate-500 dark:text-slate-400">
+                  We respect your privacy and never share your details.
+                </p>
               </form>
             )}
           </div>

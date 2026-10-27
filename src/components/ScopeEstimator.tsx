@@ -1,90 +1,87 @@
 import React from 'react';
-import { MessageSquare, Wrench, Rocket, CheckCircle2, ArrowRight } from 'lucide-react';
+import { MessageSquare, Wrench, Rocket, ArrowRight } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal.tsx';
+import { SectionHeading } from './SectionHeading.tsx';
 
 interface ScopeEstimatorProps {
   onSelectEstimateForInquiry: (summary: string) => void;
 }
 
+const STEPS = [
+  {
+    icon: MessageSquare,
+    title: 'Understand your business',
+    desc: 'We learn what you want to achieve — a new website, an operations portal, or a mobile ordering app — and map out the simplest path there.'
+  },
+  {
+    icon: Wrench,
+    title: 'Design & build',
+    desc: 'We design clean, intuitive interfaces and engineer reliable software. You review real progress every step of the way.'
+  },
+  {
+    icon: Rocket,
+    title: 'Launch & support',
+    desc: 'We handle the technical setup, domains and app-store listings, then stay on hand with friendly NZ-based support.'
+  }
+];
+
 export const ScopeEstimator: React.FC<ScopeEstimatorProps> = ({ onSelectEstimateForInquiry }) => {
-  const steps = [
-    {
-      icon: MessageSquare,
-      title: '1. Understand Your Business',
-      desc: 'We discuss what you want to achieve—whether that is launching a clean new website, setting up an admin portal to manage customers, or building a mobile ordering app for your food cart or shop.'
-    },
-    {
-      icon: Wrench,
-      title: '2. Design & Build',
-      desc: 'Our team designs clean, intuitive interfaces and builds reliable software that works smoothly on every phone, tablet, and computer. You review progress directly as we build.'
-    },
-    {
-      icon: Rocket,
-      title: '3. Launch & Dedicated Support',
-      desc: 'We take care of the technical setup, connect your domain or app store listings, and provide friendly, ongoing New Zealand based support whenever you need assistance.'
-    }
-  ];
-
   return (
-    <section id="scope-estimator" className="py-20 border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/80 transition-colors duration-200">
+    <section id="scope-estimator" className="py-24 sm:py-32 bg-white dark:bg-slate-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal direction="up" delayMs={50}>
-          <div className="max-w-3xl mb-12">
-            <div className="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-2">
-              <span
-                id="dot-anchor-estimator"
-                className="w-2.5 h-2.5 rounded-sm border border-sky-500/40 dark:border-sky-400/40 rotate-45 inline-block shrink-0"
-                aria-hidden="true"
-              />
-              <span>Simple, Direct Process</span>
-            </div>
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              How We Work With You
-            </h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-              No complicated corporate bureaucracy. Just clear communication, practical timelines, and software that solves real problems for your business.
-            </p>
-          </div>
-        </ScrollReveal>
+        <SectionHeading
+          eyebrow="How We Work"
+          title={
+            <>
+              A simple, <span className="accent-serif text-gradient">transparent</span> process.
+            </>
+          }
+          description="No corporate bureaucracy — clear communication, practical timelines and software that solves real problems."
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {steps.map((step, idx) => {
+        <div className="relative mt-16 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+          {/* Connecting line between steps */}
+          <div
+            aria-hidden="true"
+            className="hidden md:block absolute top-7 left-[8%] right-[8%] h-px bg-gradient-to-r from-sky-500/0 via-sky-500/50 to-emerald-500/0"
+          />
+          {STEPS.map((step, idx) => {
             const Icon = step.icon;
             return (
-              <ScrollReveal key={idx} direction="up" delayMs={100 + idx * 80}>
-                <div className="h-full p-6 sm:p-8 rounded-2xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-xs">
-                  <div className="space-y-4">
-                    <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{step.title}</h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{step.desc}</p>
+              <ScrollReveal key={step.title} direction="up" delayMs={100 + idx * 120}>
+                <div className="relative">
+                  <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg text-sky-600 dark:text-sky-400">
+                    <Icon className="w-6 h-6" />
                   </div>
+                  <div className="mt-6 accent-serif text-xl text-slate-400 dark:text-slate-500">Step {idx + 1}</div>
+                  <h3 className="mt-1 text-xl font-bold text-slate-900 dark:text-white">{step.title}</h3>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{step.desc}</p>
                 </div>
               </ScrollReveal>
             );
           })}
         </div>
 
-        {/* Action strip */}
-        <ScrollReveal direction="up" delayMs={240}>
-          <div className="mt-12 p-6 sm:p-8 rounded-2xl bg-sky-50 dark:bg-slate-900 border border-sky-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
-            <div>
-              <h4 className="text-base font-bold text-slate-900 dark:text-white">
-                Have a project in mind for your business?
-              </h4>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                Tell us what you need and we will prepare a clear, straightforward proposal with no obligation.
-              </p>
+        <ScrollReveal direction="up" delayMs={200}>
+          <div className="relative mt-20 overflow-hidden rounded-[2rem] bg-slate-900 dark:bg-slate-900 p-8 sm:p-12 text-white">
+            <div aria-hidden="true" className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-sky-500 to-emerald-400 opacity-40 blur-3xl animate-float" />
+            <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-8">
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                  Have a project in mind? <span className="accent-serif text-sky-300">Let's talk.</span>
+                </h3>
+                <p className="mt-2 text-sm sm:text-base text-slate-300 max-w-xl">
+                  Tell us what you need and we'll prepare a clear, no-obligation proposal.
+                </p>
+              </div>
+              <button
+                onClick={() => onSelectEstimateForInquiry('Inquiry for custom software solution')}
+                className="group shrink-0 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-slate-950 transition-transform active:scale-95"
+              >
+                Get a proposal
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </button>
             </div>
-
-            <button
-              onClick={() => onSelectEstimateForInquiry('Inquiry for custom software solution')}
-              className="px-6 py-3 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 dark:bg-sky-400 dark:hover:bg-sky-300 dark:text-slate-950 rounded-lg transition-all whitespace-nowrap shadow-sm active:scale-95 inline-flex items-center gap-2 shrink-0"
-            >
-              Get in Touch with Our Team
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
         </ScrollReveal>
       </div>

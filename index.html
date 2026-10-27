@@ -1,56 +1,60 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en-NZ">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>CloudMesh Digital Solutions | Scalable Software & SaaS Engineering</title>
-    <meta name="description" content="New Zealand registered software engineering firm specializing in high-performance web applications, enterprise business portals, custom SaaS products, and native mobile apps." />
-    
-    <!-- Open Graph / Facebook -->
+    <title>CloudMesh Digital Solutions | Websites, Web Portals & Mobile Apps — Auckland, NZ</title>
+    <meta name="description" content="CloudMesh is an Auckland digital product studio designing and engineering high-performance websites, business web portals, dashboards and iOS & Android apps." />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="CloudMesh Digital Solutions | Scalable Software & SaaS Engineering" />
-    <meta property="og:description" content="New Zealand registered software engineering firm specializing in high-performance web applications, enterprise business portals, custom SaaS products, and native mobile apps." />
-    
+    <meta property="og:site_name" content="CloudMesh Digital Solutions" />
+    <meta property="og:title" content="CloudMesh Digital Solutions | Websites, Web Portals & Mobile Apps" />
+    <meta property="og:description" content="Auckland digital product studio building websites, web portals and mobile apps for businesses worldwide." />
+    <meta property="og:locale" content="en_NZ" />
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="CloudMesh Digital Solutions | Scalable Software & SaaS Engineering" />
-    <meta name="twitter:description" content="New Zealand registered software engineering firm specializing in high-performance web applications, enterprise business portals, custom SaaS products, and native mobile apps." />
+    <meta name="twitter:title" content="CloudMesh Digital Solutions | Websites, Web Portals & Mobile Apps" />
+    <meta name="twitter:description" content="Auckland digital product studio building websites, web portals and mobile apps for businesses worldwide." />
 
-    <!-- Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <!-- Apply the saved theme before first paint to avoid a light/dark flash -->
+    <script>
+      try {
+        if (localStorage.getItem('cloudmesh_theme') === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    </script>
+
+    <!-- Fonts: Plus Jakarta Sans, Instrument Serif & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@type": "ProfessionalService",
       "name": "CloudMesh Digital Solutions",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web, iOS, Android, Cloud",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "NZD"
+      "legalName": "CloudMesh Digital Solutions Ltd",
+      "description": "Digital product studio designing and engineering websites, business web portals and mobile apps.",
+      "email": "hello@cloudmesh.co.nz",
+      "areaServed": "Worldwide",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Auckland",
+        "addressCountry": "NZ"
       },
-      "publisher": {
-        "@type": "Organization",
-        "name": "CloudMesh Digital Solutions Ltd",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "NZ",
-          "addressLocality": "Auckland"
-        },
-        "description": "High-performance software engineering firm delivering custom enterprise portals, SaaS platforms, and mobile apps worldwide."
-      }
+      "knowsAbout": ["Web development", "Web portals", "Mobile app development", "E-commerce", "SaaS"]
     }
     </script>
   </head>
-  <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased selection:bg-sky-500/20 selection:text-sky-900 dark:selection:text-sky-200 transition-colors duration-200">
+  <body class="bg-slate-50 dark:bg-slate-950">
+    <noscript>CloudMesh Digital Solutions — websites, web portals and mobile apps. Email hello@cloudmesh.co.nz.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

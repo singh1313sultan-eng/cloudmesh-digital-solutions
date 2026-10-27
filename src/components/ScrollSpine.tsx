@@ -1,66 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUp } from 'lucide-react';
 
+/** Top reading-progress bar plus a back-to-top button. */
 export const ScrollSpine: React.FC = () => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
 
   useEffect(() => {
-    let ticking = false;
+    let frame = 0;
 
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const currentScroll = window.scrollY;
-          const progress = totalHeight > 0 ? Math.min(100, Math.max(0, (currentScroll / totalHeight) * 100)) : 0;
-          setScrollProgress(progress);
-          setIsScrolledPastHero(currentScroll > 400);
-          ticking = false;
-        });
-        ticking = true;
-      }
+    const update = () => {
+      frame = 0;
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = totalHeight > 0 ? Math.min(1, Math.max(0, window.scrollY / totalHeight)) : 0;
+      // Written straight to the DOM so scrolling never re-renders React.
+      if (barRef.current) barRef.current.style.transform = `scaleX(${progress})`;
+      setIsScrolledPastHero(window.scrollY > 600);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
   return (
     <>
-      {/* Slim Top Laser Progress Bar with leading pulse spark */}
-      <div 
-        className="fixed top-0 left-0 right-0 h-[2.5px] z-50 pointer-events-none bg-slate-200/60 dark:bg-slate-900/50"
-        aria-hidden="true"
-      >
+      <div className="fixed top-0 inset-x-0 h-[2px] z-[60] pointer-events-none" aria-hidden="true">
         <div
-          className="h-full bg-gradient-to-r from-teal-500 via-sky-500 to-cyan-400 dark:from-teal-400 dark:via-sky-400 dark:to-cyan-300 relative transition-all duration-75 ease-out shadow-[0_0_8px_rgba(56,189,248,0.8)]"
-          style={{ width: `${scrollProgress}%` }}
-        >
-          {/* Glowing leading packet spark */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_10px_#38bdf8] -mr-1"></div>
-        </div>
+          ref={barRef}
+          className="h-full origin-left bg-gradient-to-r from-sky-500 via-cyan-400 to-emerald-400 shadow-[0_0_10px_rgba(56,189,248,0.7)]"
+          style={{ transform: 'scaleX(0)' }}
+        />
       </div>
 
-      {/* Floating Back to Start / Top Button (appears once user scrolls past hero) */}
-      {isScrolledPastHero && (
-        <div className="fixed bottom-6 right-6 z-40">
-          <button
-            onClick={scrollToTop}
-            className="w-10 h-10 rounded-full bg-white/95 dark:bg-slate-900/95 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-center transition-all duration-200 active:scale-95 group"
-            title="Return to Auckland HQ Start"
-            aria-label="Scroll back to top"
-          >
-            <ArrowUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-          </button>
-        </div>
-      )}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full glass text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 active:scale-95 ${
+          isScrolledPastHero ? 'opacity-100' : 'opacity-0 pointer-events-none translate-y-3'
+        }`}
+        aria-label="Scroll back to top"
+        tabIndex={isScrolledPastHero ? 0 : -1}
+      >
+        <ArrowUp className="w-4 h-4" />
+      </button>
     </>
   );
 };
-

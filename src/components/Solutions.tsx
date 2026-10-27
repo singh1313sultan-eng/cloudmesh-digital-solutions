@@ -1,319 +1,192 @@
 import React from 'react';
-import { 
-  Globe, 
-  LayoutDashboard, 
-  UtensilsCrossed, 
-  Smartphone, 
-  ArrowRight,
-  CheckCircle2,
-  ChefHat,
-  ShoppingBag,
-  Bell,
-  Users,
-  Shield,
-  Clock
-} from 'lucide-react';
+import { Globe, LayoutDashboard, UtensilsCrossed, ArrowRight, CheckCircle2, LucideIcon } from 'lucide-react';
 import { SolutionType } from '../types/index.ts';
 import { ScrollReveal } from './ScrollReveal.tsx';
+import { SectionHeading } from './SectionHeading.tsx';
+import { TiltCard } from './TiltCard.tsx';
 
 interface SolutionsProps {
   onSelectSolutionDemo: (type: SolutionType) => void;
   onOpenInquiry: (solution?: string) => void;
 }
 
-export const Solutions: React.FC<SolutionsProps> = ({ 
-  onSelectSolutionDemo,
-  onOpenInquiry
-}) => {
+interface Service {
+  id: string;
+  index: string;
+  icon: LucideIcon;
+  label: string;
+  title: string;
+  description: string;
+  features: string[];
+  panelTitle: string;
+  panelRows: [string, string][];
+  inquiry: string;
+  cta: string;
+  demo: SolutionType;
+  demoLabel: string;
+  gradient: string;
+}
+
+const SERVICES: Service[] = [
+  {
+    id: 'websites',
+    index: '01',
+    icon: Globe,
+    label: 'Websites & E-commerce',
+    title: 'Websites that turn visitors into customers.',
+    description:
+      'Fast, beautifully crafted websites and online stores that look superb on every screen, rank on Google and make it effortless to call, order or book.',
+    features: ['Bespoke brand design', 'Online ordering & payments', 'SEO & performance tuned', 'Domain, hosting & email setup'],
+    panelTitle: 'Every website includes',
+    panelRows: [
+      ['Custom design system', 'Included'],
+      ['Contact & quote forms', 'Instant alerts'],
+      ['Google search ready', 'Optimised'],
+      ['Cloud hosting & SSL', 'Fully handled']
+    ],
+    inquiry: 'Custom Website',
+    cta: 'Plan my website',
+    demo: 'website',
+    demoLabel: 'Live preview',
+    gradient: 'from-sky-500 to-cyan-400'
+  },
+  {
+    id: 'portals',
+    index: '02',
+    icon: LayoutDashboard,
+    label: 'Web Portals & Dashboards',
+    title: 'Portals that run your operations.',
+    description:
+      'Replace spreadsheets and paperwork with a secure web portal: orders, customers, inventory, staff and reporting — all in one place, from any browser.',
+    features: ['Role-based staff access', 'Live KPI dashboards', 'Customer & order records', 'Integrations & REST APIs'],
+    panelTitle: 'What you can manage',
+    panelRows: [
+      ['Customers & enquiries', 'Searchable'],
+      ['Orders & project stages', 'Live status'],
+      ['Owner vs staff access', 'Secure'],
+      ['Invoices, receipts & files', 'Organised']
+    ],
+    inquiry: 'Business Admin Portal',
+    cta: 'Plan my portal',
+    demo: 'business-portal',
+    demoLabel: 'Portal demo',
+    gradient: 'from-teal-500 to-emerald-400'
+  },
+  {
+    id: 'mobile-apps',
+    index: '03',
+    icon: UtensilsCrossed,
+    label: 'Mobile & Food-Tech Apps',
+    title: 'Apps for food businesses and teams on the move.',
+    description:
+      'From food carts to logistics fleets, we build iOS & Android apps with kitchen display screens, order-ready alerts and zero third-party commission.',
+    features: ['Kitchen display screen (KDS)', 'QR & takeaway ordering', '"Order ready" notifications', 'iOS & Android builds'],
+    panelTitle: 'How an order flows',
+    panelRows: [
+      ['Customer orders on phone', 'Step 1'],
+      ['Kitchen sees it instantly', 'Step 2'],
+      ['Customer notified for pickup', 'Step 3'],
+      ['You keep 100% of revenue', 'Always']
+    ],
+    inquiry: 'Food Shop / Cart App',
+    cta: 'Plan my app',
+    demo: 'food-saas',
+    demoLabel: 'Try ordering demo',
+    gradient: 'from-indigo-500 to-sky-400'
+  }
+];
+
+export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolutionDemo, onOpenInquiry }) => {
   return (
-    <section id="solutions" className="py-20 border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/60 relative transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
-        
-        {/* Section Header */}
-        <ScrollReveal direction="up" delayMs={50}>
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-2">
-              <span
-                id="dot-anchor-solutions"
-                className="w-2.5 h-2.5 rounded-sm border border-sky-500/40 dark:border-sky-400/40 rotate-45 inline-block shrink-0"
-                aria-hidden="true"
-              />
-              <span>What We Do</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight [text-wrap:balance]">
-              Everything your business needs to operate and grow online.
-            </h2>
-            <p className="mt-3 text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-              We build straightforward, high-quality digital solutions tailored to how you work. No unnecessary complexity, no confusing technical jargon.
-            </p>
-          </div>
-        </ScrollReveal>
+    <section id="solutions" className="relative py-24 sm:py-32 bg-white dark:bg-slate-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="What We Do"
+          title={
+            <>
+              Everything your business needs to <span className="accent-serif text-gradient">grow online.</span>
+            </>
+          }
+          description="Straightforward, high-quality digital products tailored to how you work — without the jargon."
+        />
 
-        {/* 1. WEBSITES FOR ANY BUSINESS */}
-        <div id="websites" className="pt-4 scroll-mt-28">
-          <ScrollReveal direction="up" delayMs={60}>
-            <div className="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-                    <Globe className="w-4 h-4" />
-                    <span>01. Modern Websites</span>
-                  </div>
-
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    Clean, fast websites for any business.
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                    A professional website that looks great on mobile phones, tablets, and desktop computers. Built to showcase your services, build trust with customers, and make it effortless for people to call, message, or visit you.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-slate-700 dark:text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Mobile-first responsive design</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Contact & quote request forms</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Fast loading with search optimization</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Google Maps location & social links</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3 pt-4">
-                    <button
-                      onClick={() => onOpenInquiry('Custom Website')}
-                      className="px-5 py-2.5 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 dark:bg-sky-400 dark:hover:bg-sky-300 dark:text-slate-950 rounded-lg transition-colors inline-flex items-center gap-2 active:scale-95 shadow-sm"
-                    >
-                      Build a Website for My Business
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => onSelectSolutionDemo('website')}
-                      className="px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
-                    >
-                      View Live Preview
-                    </button>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-5 bg-white dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-3">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center justify-between">
-                    <span>Website Features Included</span>
-                    <span className="text-sky-600 dark:text-sky-400 font-normal">All Devices</span>
-                  </div>
-                  <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Custom Brand Design</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">Included</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Secure Contact & Inquiry Forms</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">Instant Email Alert</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Google Search Ready</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">Optimized</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Domain & Cloud Setup</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">Fully Handled</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-
-        {/* 2. ADMIN PORTALS FOR ANY BUSINESS */}
-        <div id="portals" className="pt-4 scroll-mt-28">
-          <ScrollReveal direction="up" delayMs={60}>
-            <div className="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-600 dark:text-teal-400">
-                    <LayoutDashboard className="w-4 h-4" />
-                    <span>02. Business Portals</span>
-                  </div>
-
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    Admin portals for any business.
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Stop drowning in spreadsheets and manual paperwork. We create custom admin portals and dashboards where business owners and staff can manage incoming customer requests, orders, inventory, schedules, and documents from any browser.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-slate-700 dark:text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Centralized order & booking dashboard</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Customer & client contact records</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Inventory stock & item availability</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>Staff logins with permissions</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3 pt-4">
-                    <button
-                      onClick={() => onOpenInquiry('Business Admin Portal')}
-                      className="px-5 py-2.5 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-500 dark:bg-teal-400 dark:hover:bg-teal-300 dark:text-slate-950 rounded-lg transition-colors inline-flex items-center gap-2 active:scale-95 shadow-sm"
-                    >
-                      Get an Admin Portal for My Business
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => onSelectSolutionDemo('business-portal')}
-                      className="px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
-                    >
-                      View Live Portal Demo
-                    </button>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-5 bg-white dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-3">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center justify-between">
-                    <span>What You Can Manage</span>
-                    <span className="text-teal-600 dark:text-teal-400 font-normal">All in One Place</span>
-                  </div>
-                  <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Customer Records & Inquiries</span>
-                      <span className="text-slate-500 dark:text-slate-400">Searchable</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Order & Project Stages</span>
-                      <span className="text-slate-500 dark:text-slate-400">Live Status</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Role-Based Access (Owner vs Staff)</span>
-                      <span className="text-slate-500 dark:text-slate-400">Secure</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">Invoices, Receipts & Files</span>
-                      <span className="text-slate-500 dark:text-slate-400">Organized</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-
-        {/* 3. MOBILE APPS FOR FOOD SHOPS, FOOD CARTS & OPERATIONS */}
-        <div id="mobile-apps" className="pt-4 scroll-mt-28">
-          <ScrollReveal direction="up" delayMs={60}>
-            <div className="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-                    <UtensilsCrossed className="w-4 h-4" />
-                    <span>03. Food Shops & Food Carts</span>
-                  </div>
-
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    Mobile apps for business owners and food operations.
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Whether you operate a food cart, food truck, takeaway shop, cafe, or restaurant, we build custom apps to run your daily operations smoothly. Customers can browse your menu and order ahead, while your kitchen screen shows incoming orders instantly.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-slate-700 dark:text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <ChefHat className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                      <span>Live Kitchen Display Screen (KDS)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ShoppingBag className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                      <span>Contactless QR & takeaway ordering</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Bell className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                      <span>"Order Ready" phone alert notifications</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Shield className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                      <span>Zero third-party commission fees</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3 pt-4">
-                    <button
-                      onClick={() => onOpenInquiry('Food Shop / Cart App')}
-                      className="px-5 py-2.5 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 dark:bg-sky-400 dark:hover:bg-sky-300 dark:text-slate-950 rounded-lg transition-colors inline-flex items-center gap-2 active:scale-95 shadow-sm"
-                    >
-                      Get an App for My Food Shop or Cart
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => onSelectSolutionDemo('food-saas')}
-                      className="px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
-                    >
-                      Try Food Ordering Demo
-                    </button>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-5 bg-white dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-3">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center justify-between">
-                    <span>How Food Carts & Shops Use It</span>
-                    <span className="text-sky-600 dark:text-sky-400 font-normal">Fast & Simple</span>
-                  </div>
-                  <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
-                    <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-                      <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-sky-500"></span>
-                        Customer Orders on Phone
+        <div className="mt-16 space-y-10 lg:space-y-16">
+          {SERVICES.map((s, i) => {
+            const Icon = s.icon;
+            const reversed = i % 2 === 1;
+            return (
+              <div key={s.id} id={s.id} className="scroll-mt-28">
+                <ScrollReveal direction="up" delayMs={60}>
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+                    <div className={`lg:col-span-7 space-y-5 ${reversed ? 'lg:order-2' : ''}`}>
+                      <div className="flex items-center gap-4">
+                        <span className="accent-serif text-5xl text-slate-300 dark:text-slate-700 leading-none">{s.index}</span>
+                        <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                          <Icon className="w-4 h-4" />
+                          {s.label}
+                        </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                        Customers view your digital menu, select options, and place pickup or counter orders without waiting in long queues.
-                      </p>
+
+                      <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight [text-wrap:balance]">
+                        {s.title}
+                      </h3>
+                      <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">{s.description}</p>
+
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-sm text-slate-700 dark:text-slate-300">
+                        {s.features.map(f => (
+                          <li key={f} className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="flex flex-wrap items-center gap-3 pt-3">
+                        <button
+                          onClick={() => onOpenInquiry(s.inquiry)}
+                          className="group inline-flex items-center gap-2 rounded-full bg-slate-900 dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-slate-950 transition-transform active:scale-95"
+                        >
+                          {s.cta}
+                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </button>
+                        <button
+                          onClick={() => onSelectSolutionDemo(s.demo)}
+                          className="rounded-full border border-slate-300 dark:border-slate-700 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-slate-900 dark:hover:border-white transition-colors"
+                        >
+                          {s.demoLabel}
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-                      <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                        Kitchen Sees Order Immediately
-                      </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                        Kitchen screen dings with new items. Cook marks items "Preparing" and "Ready" with a simple tap.
-                      </p>
-                    </div>
-
-                    <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-                      <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        Customer Notified for Pickup
-                      </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                        An instant notification alerts the customer to collect their hot food from your counter or food cart window.
-                      </p>
+                    <div className={`lg:col-span-5 ${reversed ? 'lg:order-1' : ''}`}>
+                      <TiltCard className="rounded-3xl">
+                        <div className="relative rounded-3xl p-[1px] bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900 shadow-xl dark:shadow-black/40">
+                          <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-7 [transform-style:preserve-3d]">
+                            <div className={`tilt-pop mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${s.gradient} text-white shadow-lg`}>
+                              <Icon className="w-6 h-6" />
+                            </div>
+                            <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">{s.panelTitle}</div>
+                            <ul className="space-y-2">
+                              {s.panelRows.map(([name, value]) => (
+                                <li
+                                  key={name}
+                                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 px-3.5 py-2.5 text-xs"
+                                >
+                                  <span className="font-medium text-slate-800 dark:text-slate-200">{name}</span>
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-medium whitespace-nowrap">{value}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </TiltCard>
                     </div>
                   </div>
-                </div>
+                </ScrollReveal>
               </div>
-            </div>
-          </ScrollReveal>
+            );
+          })}
         </div>
-
       </div>
     </section>
   );

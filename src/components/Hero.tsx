@@ -1,183 +1,123 @@
-import React from 'react';
-import { ArrowRight, Globe, LayoutDashboard, Smartphone, ShieldCheck, Check } from 'lucide-react';
+import React, { Suspense, lazy } from 'react';
+import { ArrowRight, Check } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal.tsx';
-import { CloudMeshLogo } from './CloudMeshLogo.tsx';
+import { PROJECTS } from '../data/projects.ts';
+
+// three.js is split into its own chunk so first paint never waits on WebGL code.
+const HeroScene = lazy(() => import('./HeroScene.tsx'));
 
 interface HeroProps {
   onOpenInquiry: () => void;
 }
 
+const STATS = [
+  { value: `${PROJECTS.length}+`, label: 'Products shipped' },
+  { value: 'Web · iOS · Android', label: 'Platforms we deliver on' },
+  { value: 'NZ', label: 'Registered & Auckland-based' }
+];
+
 export const Hero: React.FC<HeroProps> = ({ onOpenInquiry }) => {
   return (
-    <section id="top" className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
-      {/* Subtle ambient background glow */}
-      <div 
-        aria-hidden="true" 
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-sky-200/40 via-teal-100/30 to-slate-200/50 dark:from-sky-950/30 dark:via-slate-900/40 dark:to-teal-950/20 blur-[120px] pointer-events-none rounded-full"
+    <section
+      id="top"
+      className="relative min-h-[100svh] flex items-center pt-28 pb-16 overflow-hidden bg-slate-50 dark:bg-slate-950"
+    >
+      {/* Ambient light */}
+      <div aria-hidden="true" className="absolute inset-0 bg-grid opacity-70" />
+      <div
+        aria-hidden="true"
+        className="absolute -top-40 right-[-10%] w-[720px] h-[720px] rounded-full bg-gradient-to-br from-sky-300/40 via-cyan-200/30 to-emerald-200/30 dark:from-sky-600/20 dark:via-cyan-700/10 dark:to-emerald-700/10 blur-[120px]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-[-20%] left-[-10%] w-[520px] h-[520px] rounded-full bg-gradient-to-tr from-indigo-200/40 to-sky-100/20 dark:from-indigo-900/30 dark:to-transparent blur-[120px]"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ScrollReveal direction="up" delayMs={50}>
-          {/* Simple trust markers without numbers */}
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 mb-6">
-            <span className="flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Auckland, New Zealand
-            </span>
-            <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">·</span>
-            <span>Registered Digital Solutions Company</span>
-            <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">·</span>
-            <span>Worldwide Delivery</span>
-          </div>
-        </ScrollReveal>
+      {/* 3D scene: full-bleed behind copy on mobile, right column on desktop */}
+      <div className="absolute inset-0 lg:left-[42%] opacity-40 sm:opacity-60 lg:opacity-100">
+        <Suspense fallback={null}>
+          <HeroScene />
+        </Suspense>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Main Hero Copy */}
-          <div className="lg:col-span-7 space-y-6">
-            <ScrollReveal direction="up" delayMs={100}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.15] [text-wrap:balance]">
-                Websites, admin portals, and mobile apps built for your business.
-              </h1>
-            </ScrollReveal>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-none">
+        <div className="max-w-2xl pointer-events-auto">
+          <ScrollReveal direction="up" delayMs={50}>
+            <div className="inline-flex items-center gap-2 rounded-full glass border border-slate-200/80 dark:border-slate-800 px-3.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              </span>
+              Digital product studio · Auckland, New Zealand
+            </div>
+          </ScrollReveal>
 
-            <ScrollReveal direction="up" delayMs={160}>
-              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-                CloudMesh Digital Solutions creates clean, reliable software that helps business owners run daily operations smoothly—from modern marketing websites and custom business portals to mobile apps for food shops, food carts, and service businesses.
-              </p>
-            </ScrollReveal>
+          <ScrollReveal direction="up" delayMs={120}>
+            <h1 className="mt-7 text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-[-0.035em] leading-[1.02] [text-wrap:balance]">
+              We build websites & portals{' '}
+              <span className="accent-serif text-gradient pr-2">that move business forward.</span>
+            </h1>
+          </ScrollReveal>
 
-            {/* What we deliver highlight pills */}
-            <ScrollReveal direction="up" delayMs={200}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 shadow-xs">
-                  <Globe className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                  <span>Custom Websites</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 shadow-xs">
-                  <LayoutDashboard className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                  <span>Business Admin Portals</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 shadow-xs">
-                  <Smartphone className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                  <span>Food Shop & Cart Apps</span>
-                </div>
-              </div>
-            </ScrollReveal>
+          <ScrollReveal direction="up" delayMs={200}>
+            <p className="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl [text-wrap:pretty]">
+              CloudMesh designs and engineers high-performance websites, web portals and mobile apps — from restaurant
+              ordering platforms to enterprise dashboards.
+            </p>
+          </ScrollReveal>
 
-            {/* Primary Action Row */}
-            <ScrollReveal direction="up" delayMs={240}>
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <a
-                  href="#websites"
-                  className="px-6 py-3 text-sm font-semibold text-white bg-sky-600 hover:bg-sky-500 dark:bg-sky-400 dark:hover:bg-sky-300 dark:text-slate-950 rounded-md transition-all shadow-sm shadow-sky-500/20 inline-flex items-center gap-2 active:scale-95 whitespace-nowrap"
-                >
-                  Explore What We Build
-                  <ArrowRight className="w-4 h-4" />
-                </a>
+          <ScrollReveal direction="up" delayMs={280}>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <a
+                href="#work"
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-slate-900 dark:bg-white px-7 py-3.5 text-sm font-semibold text-white dark:text-slate-950 shadow-xl shadow-slate-900/20 dark:shadow-sky-500/20 transition-transform active:scale-95"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-sky-600 via-cyan-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <span className="relative">View Our Work</span>
+                <ArrowRight className="relative w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </a>
+              <button
+                onClick={onOpenInquiry}
+                className="inline-flex items-center gap-2 rounded-full glass border border-slate-300/80 dark:border-slate-700 px-7 py-3.5 text-sm font-semibold text-slate-800 dark:text-slate-100 hover:border-slate-900 dark:hover:border-white transition-colors"
+              >
+                Start a Project
+              </button>
+            </div>
+          </ScrollReveal>
 
-                <button
-                  onClick={onOpenInquiry}
-                  className="px-6 py-3 text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-100 border border-slate-300 dark:text-slate-200 dark:hover:text-white dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:border-slate-700/80 rounded-md transition-all inline-flex items-center gap-2 whitespace-nowrap shadow-sm"
-                >
-                  Tell Us About Your Project
-                </button>
-              </div>
-            </ScrollReveal>
-
-            {/* Key commitments without numbers */}
-            <ScrollReveal direction="up" delayMs={280}>
-              <div className="pt-6 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center gap-6 text-xs text-slate-600 dark:text-slate-400">
-                <span className="flex items-center gap-1.5">
+          <ScrollReveal direction="up" delayMs={340}>
+            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
+              {['Mobile-first & lightning fast', 'Built around your workflow', 'You own the code'].map(item => (
+                <li key={item} className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Works seamlessly on phones & computers
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Custom made for your business workflow
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                  Full ownership of your software
-                </span>
-              </div>
-            </ScrollReveal>
-          </div>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </ScrollReveal>
 
-          {/* Right Visual Card: Clean preview of what we do */}
-          <div className="lg:col-span-5">
-            <ScrollReveal direction="up" delayMs={200}>
-              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl dark:shadow-2xl dark:shadow-black/40 relative overflow-hidden transition-colors">
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <CloudMeshLogo size="sm" showText={false} />
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                      CloudMesh
-                    </span>
-                    <span className="text-xs text-slate-400 dark:text-slate-500">|</span>
-                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                      Solutions Suite
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
-                    Ready to Deploy
-                  </span>
+          <ScrollReveal direction="up" delayMs={400}>
+            <dl className="mt-12 grid grid-cols-3 gap-4 max-w-xl border-t border-slate-200 dark:border-slate-800 pt-6">
+              {STATS.map(s => (
+                <div key={s.label}>
+                  <dt className="sr-only">{s.label}</dt>
+                  <dd className="text-lg sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{s.value}</dd>
+                  <dd className="mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">{s.label}</dd>
                 </div>
-
-                <div className="py-4 space-y-4">
-                  {/* Pillar 1: Modern Websites */}
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-lg bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
-                      <Globe className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white">Websites</div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
-                        Fast, modern websites designed to show what your business does and turn visitors into paying customers.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Pillar 2: Business Admin Portals */}
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-lg bg-teal-100 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
-                      <LayoutDashboard className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white">Admin Portals for Any Business</div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
-                        Secure web portals to manage your orders, customer lists, inventory, staff tasks, and reports in one place.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Pillar 3: Food Shop & Food Cart Mobile Apps */}
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-                      <Smartphone className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white">Mobile Apps for Food Shops & Carts</div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
-                        Custom apps for owners, kitchen screens, and customers. Take takeaway orders, manage menus, and handle queues right from your phone.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Fast Action */}
-                  <div className="pt-2">
-                    <button
-                      onClick={onOpenInquiry}
-                      className="w-full py-2.5 text-xs font-semibold text-sky-700 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/50 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800/80 rounded-lg transition-colors text-center block"
-                    >
-                      Request a Consultation with Our Team →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
+              ))}
+            </dl>
+          </ScrollReveal>
         </div>
       </div>
+
+      {/* Scroll cue */}
+      <a
+        href="#solutions"
+        aria-label="Scroll to services"
+        className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-10 h-11 w-7 items-start justify-center rounded-full border-2 border-slate-300 dark:border-slate-700 p-1.5"
+      >
+        <span className="h-2 w-1 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce" />
+      </a>
     </section>
   );
 };
