@@ -7,13 +7,7 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-display: 'Instrument Serif', Georgia, serif;
 
-  --animate-marquee: marquee 40s linear infinite;
   --animate-float: float 7s ease-in-out infinite;
-
-  @keyframes marquee {
-    from { transform: translate3d(0, 0, 0); }
-    to { transform: translate3d(-50%, 0, 0); }
-  }
 
   @keyframes float {
     0%, 100% { transform: translate3d(0, 0, 0); }
@@ -156,6 +150,33 @@
   .dark .cursor-glow {
     background: radial-gradient(circle, rgb(56 189 248 / 0.09), rgb(52 211 153 / 0.04) 40%, transparent 70%);
   }
+}
+
+.shape-spin {
+  animation: spin-3d 18s linear infinite;
+}
+
+.ring-spin {
+  animation: spin-flat 14s linear infinite;
+}
+
+@keyframes spin-3d {
+  from { transform: rotateX(0deg) rotateY(0deg); }
+  to { transform: rotateX(360deg) rotateY(720deg); }
+}
+
+@keyframes spin-flat {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-reverse {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
 }
 
 @keyframes mesh-flow {

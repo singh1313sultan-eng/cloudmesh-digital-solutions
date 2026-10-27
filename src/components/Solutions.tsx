@@ -2,7 +2,8 @@ import React from 'react';
 import { Globe, LayoutDashboard, UtensilsCrossed, ArrowRight, CheckCircle2, LucideIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { SolutionType } from '../types/index.ts';
-import { ScrollReveal } from './ScrollReveal.tsx';
+import { Scroll3D } from './Scroll3D.tsx';
+import { FloatingShapes } from './FloatingShapes.tsx';
 import { SectionHeading } from './SectionHeading.tsx';
 import { TiltCard } from './TiltCard.tsx';
 
@@ -99,8 +100,17 @@ const SERVICES: Service[] = [
 
 export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolutionDemo, onOpenInquiry }) => {
   return (
-    <section id="solutions" className="relative py-24 sm:py-32 bg-white dark:bg-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="solutions" className="relative py-24 sm:py-32 bg-white dark:bg-slate-950 overflow-hidden">
+      <FloatingShapes
+        shapes={[
+          { kind: 'cube', position: { top: '4%', right: '6%' }, size: 90, speed: -320, spin: 20 },
+          { kind: 'ring', position: { top: '38%', left: '-3%' }, size: 220, speed: -180, spin: 16 },
+          { kind: 'sphere', position: { top: '62%', right: '3%' }, size: 70, speed: -420 },
+          { kind: 'cube', position: { bottom: '6%', left: '8%' }, size: 56, speed: -260, spin: 14 }
+        ]}
+        className="opacity-70 lg:opacity-100"
+      />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="What We Do"
           title={
@@ -117,7 +127,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolutionDemo, onOp
             const reversed = i % 2 === 1;
             return (
               <div key={s.id} id={s.id} className="scroll-mt-28">
-                <ScrollReveal direction="up" delayMs={60}>
+                <Scroll3D axis={reversed ? 'right' : 'left'} tilt={22}>
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
                     <div className={`lg:col-span-7 space-y-5 ${reversed ? 'lg:order-2' : ''}`}>
                       <div className="flex items-center gap-4">
@@ -187,7 +197,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolutionDemo, onOp
                       </TiltCard>
                     </div>
                   </div>
-                </ScrollReveal>
+                </Scroll3D>
               </div>
             );
           })}

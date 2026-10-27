@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useId } from 'react';
 import { Send, CheckCircle2, Mail, MapPin, MessageSquare } from 'lucide-react';
 import { SectionHeading } from './SectionHeading.tsx';
+import { Scroll3D } from './Scroll3D.tsx';
+import { FloatingShapes } from './FloatingShapes.tsx';
 import { CONTACT_EMAIL } from '../data/site.ts';
 
 const PROJECT_TYPES = [
@@ -110,6 +112,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope, 
   return (
     <section id="contact" className="relative py-24 sm:py-32 bg-slate-50 dark:bg-slate-950 overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 bg-grid opacity-50" />
+      <FloatingShapes
+        shapes={[
+          { kind: 'ring', position: { top: '10%', left: '-6%' }, size: 260, speed: -200, spin: 18 },
+          { kind: 'cube', position: { bottom: '12%', left: '30%' }, size: 64, speed: -240, spin: 15 },
+          { kind: 'sphere', position: { top: '6%', right: '4%' }, size: 60, speed: -300 }
+        ]}
+      />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           <div className="lg:col-span-5 space-y-10">
@@ -156,7 +165,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope, 
             </ul>
           </div>
 
-          <div className="lg:col-span-7 rounded-[2rem] bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 shadow-2xl shadow-slate-900/5 dark:shadow-black/40">
+          <Scroll3D axis="right" tilt={24} className="lg:col-span-7">
+          <div className="rounded-[2rem] bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 shadow-2xl shadow-slate-900/5 dark:shadow-black/40">
             {isSubmitted ? (
               <div className="py-10 text-center space-y-4" role="status">
                 <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
@@ -261,6 +271,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope, 
               </form>
             )}
           </div>
+          </Scroll3D>
         </div>
       </div>
     </section>

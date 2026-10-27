@@ -4,6 +4,8 @@ import { ArrowUpRight, Globe, LayoutDashboard, Smartphone } from 'lucide-react';
 import { PROJECTS, Project, ProjectKind } from '../data/projects.ts';
 import { SectionHeading } from './SectionHeading.tsx';
 import { TiltCard } from './TiltCard.tsx';
+import { Scroll3D } from './Scroll3D.tsx';
+import { FloatingShapes } from './FloatingShapes.tsx';
 
 type Filter = 'all' | ProjectKind;
 
@@ -186,6 +188,13 @@ export const Portfolio: React.FC = () => {
   return (
     <section id="work" className="relative py-24 sm:py-32 bg-slate-50 dark:bg-slate-950 overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 bg-grid opacity-60" />
+      <FloatingShapes
+        shapes={[
+          { kind: 'ring', position: { top: '2%', right: '-4%' }, size: 300, speed: -240, spin: 22 },
+          { kind: 'sphere', position: { top: '30%', left: '1%' }, size: 54, speed: -380 },
+          { kind: 'cube', position: { bottom: '8%', right: '4%' }, size: 80, speed: -300, spin: 18 }
+        ]}
+      />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
           <SectionHeading
@@ -230,14 +239,14 @@ export const Portfolio: React.FC = () => {
               <motion.div
                 key={project.id}
                 layout
-                initial={{ opacity: 0, y: 40, rotateX: -12 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.7, delay: (i % 3) * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                exit={{ opacity: 0, scale: 0.9, rotateY: 30 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 style={{ transformPerspective: 1200 }}
               >
-                <ProjectCard project={project} />
+                {/* Columns swing in from the outside edges; the middle column tips up */}
+                <Scroll3D axis={(['left', 'x', 'right'] as const)[i % 3]} tilt={i % 3 === 1 ? 24 : 30} className="h-full">
+                  <ProjectCard project={project} />
+                </Scroll3D>
               </motion.div>
             ))}
           </AnimatePresence>

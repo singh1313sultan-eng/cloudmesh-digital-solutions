@@ -12,7 +12,7 @@ import { Architecture } from './components/Architecture.tsx';
 import { ContactSection } from './components/ContactSection.tsx';
 import { Footer } from './components/Footer.tsx';
 import { ScrollSpine } from './components/ScrollSpine.tsx';
-import { ScrollReveal } from './components/ScrollReveal.tsx';
+import { Scroll3D } from './components/Scroll3D.tsx';
 import { SolutionType } from './types/index.ts';
 import { THEME_STORAGE_KEY } from './data/site.ts';
 
@@ -84,13 +84,13 @@ export default function App() {
         <Solutions onSelectSolutionDemo={handleSelectSolutionDemo} onOpenInquiry={handleOpenInquiry} />
         <Portfolio />
 
-        <ScrollReveal direction="up" delayMs={60}>
+        <Scroll3D tilt={20}>
           <InteractiveShowcase
             activeTab={activeShowcaseTab}
             setActiveTab={setActiveShowcaseTab}
             onOpenInquiry={handleOpenInquiry}
           />
-        </ScrollReveal>
+        </Scroll3D>
 
         <Architecture />
         <ScopeEstimator onSelectEstimateForInquiry={handleSelectEstimateForInquiry} />
