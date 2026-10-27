@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon, ArrowUpRight } from 'lucide-react';
 import { CloudMeshLogo } from './CloudMeshLogo.tsx';
+import { Magnetic } from './Magnetic.tsx';
 import { NAV_LINKS } from '../data/site.ts';
 
 interface HeaderProps {
@@ -39,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenInquiry, theme, onToggleTh
         }`}
       >
         <div className="h-16 pl-4 pr-2 sm:pl-5 flex items-center justify-between gap-4">
-          <a href="#top" className="shrink-0 transition-transform active:scale-95" aria-label="CloudMesh Digital Solutions home">
+          <a href="#top" className="group shrink-0 transition-transform active:scale-95" aria-label="CloudMesh Digital Solutions home">
             <CloudMeshLogo size="sm" />
           </a>
 
@@ -65,13 +66,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenInquiry, theme, onToggleTh
               {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-amber-300" />}
             </button>
 
-            <button
-              onClick={() => onOpenInquiry()}
-              className="group hidden sm:inline-flex items-center gap-1.5 rounded-full bg-slate-900 dark:bg-white px-5 py-2.5 text-xs font-semibold text-white dark:text-slate-950 transition-transform active:scale-95"
-            >
-              Start a Project
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </button>
+            <Magnetic strength={0.25} className="hidden sm:inline-block">
+              <button
+                onClick={() => onOpenInquiry()}
+                className="group inline-flex items-center gap-1.5 rounded-full bg-slate-900 dark:bg-white px-5 py-2.5 text-xs font-semibold text-white dark:text-slate-950 transition-transform active:scale-95"
+              >
+                Start a Project
+                <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </button>
+            </Magnetic>
 
             <button
               onClick={() => setMobileMenuOpen(open => !open)}

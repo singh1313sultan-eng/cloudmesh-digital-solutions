@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
 import { TechMarquee } from './components/TechMarquee.tsx';
+import { ScrollStatement } from './components/ScrollStatement.tsx';
+import { CursorGlow } from './components/CursorGlow.tsx';
 import { Solutions } from './components/Solutions.tsx';
 import { Portfolio } from './components/Portfolio.tsx';
 import { InteractiveShowcase } from './components/InteractiveShowcase.tsx';
@@ -67,6 +69,7 @@ export default function App() {
       </a>
 
       <ScrollSpine />
+      <CursorGlow />
 
       <Header
         onOpenInquiry={handleOpenInquiry}
@@ -77,6 +80,7 @@ export default function App() {
       <main id="main">
         <Hero onOpenInquiry={() => handleOpenInquiry()} />
         <TechMarquee />
+        <ScrollStatement />
         <Solutions onSelectSolutionDemo={handleSelectSolutionDemo} onOpenInquiry={handleOpenInquiry} />
         <Portfolio />
 

@@ -9,7 +9,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-16 border-b border-slate-800">
           <div className="md:col-span-6 space-y-5">
-            <a href="#top" className="inline-block dark" aria-label="CloudMesh Digital Solutions home">
+            <a href="#top" className="group inline-block dark" aria-label="CloudMesh Digital Solutions home">
               <CloudMeshLogo size="md" />
             </a>
             <p className="text-2xl sm:text-3xl font-bold tracking-tight text-white max-w-md leading-snug">

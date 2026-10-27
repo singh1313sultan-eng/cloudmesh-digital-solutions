@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useRef, useState } from 'react';
+import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react';
 import { ArrowUpRight, Globe, LayoutDashboard, Smartphone } from 'lucide-react';
 import { PROJECTS, Project, ProjectKind } from '../data/projects.ts';
 import { SectionHeading } from './SectionHeading.tsx';
@@ -109,13 +109,24 @@ const ProjectVisual: React.FC<{ project: Project }> = ({ project }) => {
 
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   const KindIcon = KIND_ICON[project.kind];
+  const visualRef = useRef<HTMLDivElement>(null);
+  // Mockup drifts against the scroll direction for a sense of depth.
+  const { scrollYProgress } = useScroll({ target: visualRef, offset: ['start end', 'end start'] });
+  const visualY = useTransform(scrollYProgress, [0, 1], [28, -28]);
+  const backdropScale = useTransform(scrollYProgress, [0, 1], [1.15, 1]);
+
   return (
     <TiltCard className="h-full rounded-3xl" maxTilt={5}>
-      <article className="h-full flex flex-col rounded-3xl bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-sky-900/10 dark:hover:shadow-black/40 transition-shadow duration-500 overflow-hidden [transform-style:preserve-3d]">
-        <div className="relative h-56 sm:h-64 overflow-hidden [transform-style:preserve-3d]">
-          <div className={`absolute inset-0 bg-gradient-to-br ${project.accent} opacity-90`} />
+      <article className="group/card h-full flex flex-col rounded-3xl bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-sky-900/10 dark:hover:shadow-black/40 transition-shadow duration-500 overflow-hidden [transform-style:preserve-3d]">
+        <div ref={visualRef} className="relative h-56 sm:h-64 overflow-hidden [transform-style:preserve-3d]">
+          <motion.div style={{ scale: backdropScale }} className={`absolute inset-0 bg-gradient-to-br ${project.accent} opacity-90`} />
           <div className="absolute inset-0 bg-grid opacity-40 mix-blend-overlay" />
-          <ProjectVisual project={project} />
+          <motion.div
+            style={{ y: visualY }}
+            className="absolute inset-0 [transform-style:preserve-3d] transition-transform duration-700 group-hover/card:scale-[1.04]"
+          >
+            <ProjectVisual project={project} />
+          </motion.div>
         </div>
 
         <div className="flex-1 flex flex-col p-6 sm:p-7 gap-4">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Globe, LayoutDashboard, UtensilsCrossed, ArrowRight, CheckCircle2, LucideIcon } from 'lucide-react';
+import { motion } from 'motion/react';
 import { SolutionType } from '../types/index.ts';
 import { ScrollReveal } from './ScrollReveal.tsx';
 import { SectionHeading } from './SectionHeading.tsx';
@@ -163,18 +164,22 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolutionDemo, onOp
                         <div className="relative rounded-3xl p-[1px] bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900 shadow-xl dark:shadow-black/40">
                           <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-7 [transform-style:preserve-3d]">
                             <div className={`tilt-pop mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${s.gradient} text-white shadow-lg`}>
-                              <Icon className="w-6 h-6" />
+                              <Icon className="w-6 h-6 animate-float" />
                             </div>
                             <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">{s.panelTitle}</div>
                             <ul className="space-y-2">
-                              {s.panelRows.map(([name, value]) => (
-                                <li
+                              {s.panelRows.map(([name, value], rowIndex) => (
+                                <motion.li
                                   key={name}
+                                  initial={{ opacity: 0, x: reversed ? -24 : 24 }}
+                                  whileInView={{ opacity: 1, x: 0 }}
+                                  viewport={{ once: true, margin: '-40px' }}
+                                  transition={{ duration: 0.6, delay: 0.25 + rowIndex * 0.1, ease: [0.16, 1, 0.3, 1] }}
                                   className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 px-3.5 py-2.5 text-xs"
                                 >
                                   <span className="font-medium text-slate-800 dark:text-slate-200">{name}</span>
                                   <span className="text-emerald-600 dark:text-emerald-400 font-medium whitespace-nowrap">{value}</span>
-                                </li>
+                                </motion.li>
                               ))}
                             </ul>
                           </div>

@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { motion } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal.tsx';
 
 interface SectionHeadingProps {
@@ -23,7 +24,14 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
           align === 'center' ? 'justify-center' : ''
         }`}
       >
-        <span className="h-px w-8 bg-gradient-to-r from-transparent to-sky-500" aria-hidden="true" />
+        <motion.span
+          className="h-px w-8 origin-left bg-gradient-to-r from-transparent to-sky-500"
+          aria-hidden="true"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        />
         <span>{eyebrow}</span>
       </div>
       <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] [text-wrap:balance]">

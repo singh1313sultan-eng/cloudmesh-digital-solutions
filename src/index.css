@@ -128,6 +128,43 @@
   .tilt-pop {
     transform: translateZ(36px);
   }
+
+  /* Logo: data flowing along the mesh edges, nodes pulsing in turn */
+  .mesh-edge {
+    stroke-dasharray: 3 2.5;
+    animation: mesh-flow 2.4s linear infinite;
+  }
+
+  .mesh-node {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: node-pulse 2.4s ease-in-out infinite;
+  }
+
+  .cloud-mark {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .group:hover .cloud-mark {
+    transform: translateY(-2px) scale(1.06);
+  }
+
+  .cursor-glow {
+    background: radial-gradient(circle, rgb(14 165 233 / 0.10), rgb(16 185 129 / 0.05) 40%, transparent 70%);
+  }
+
+  .dark .cursor-glow {
+    background: radial-gradient(circle, rgb(56 189 248 / 0.09), rgb(52 211 153 / 0.04) 40%, transparent 70%);
+  }
+}
+
+@keyframes mesh-flow {
+  to { stroke-dashoffset: -11; }
+}
+
+@keyframes node-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
 }
 
 .tabular-nums {
